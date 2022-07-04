@@ -9,15 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import lombok.Data;
+import com.sbs.exam.demo.vo.Article;
 
 @Controller
-public class UsrHomeController {
-	private int count; 
-	
-	public UsrHomeController() {
-		count = 0; 
-	}
+public class UsrHomeController {	
 	@RequestMapping ("usr/home/getString")
 	@ResponseBody
 	public String getString() {
@@ -70,15 +65,13 @@ public class UsrHomeController {
 		Article article = new Article();
 		return article;
 	}
-	
-}
-@Data
-class Article {
-	private int id;
-	private String title;
-	
-	public Article() {
-		id = 1;
-		title = "제목";
+	@RequestMapping ("usr/home/getArticles")
+	@ResponseBody
+	public List<Article> getArticles() {
+		List<Article> list = new ArrayList<>();
+		list.add(new Article());
+		list.add(new Article(1,"제목1","내용1"));
+		return list;
 	}
+	
 }
