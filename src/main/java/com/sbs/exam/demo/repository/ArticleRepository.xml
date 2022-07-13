@@ -6,13 +6,15 @@
 	<insert id="writeArticle">
 		INSERT INTO article
 		SET regDate = NOW(),
-		updateDate = NOW(),
+		updateDate =
+		NOW(),
 		title=#{title},
 		`body`=#{body}
 	</insert>
 
 	<select id="getArticle" resultType="Article">
-		SELECT * FROM article WHERE id = #{id}
+		SELECT * FROM article WHERE
+		id = #{id}
 	</select>
 
 	<select id="getArticles" resultType="Article">
@@ -24,10 +26,16 @@
 	</delete>
 
 	<update id="modifyArticle">
-		UPDATE article SET
-		title= #{title},
-		`body`=#{body},
-		updateDate = now()
+		UPDATE article
+		<set>
+			<if test="title !=null and title != '' ">
+				title= #{title},
+			</if>
+			<if test="body !=nulland body != ' ' ">
+				`body`=#{body},
+			</if>
+			updateDate = now()
+		</set>
 		WHERE id = #{id}
 	</update>
 
