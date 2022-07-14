@@ -1,4 +1,4 @@
-DROP databasse IF EXISTS sb_c_2022_2nd;
+DROP DATABASE IF EXISTS sb_c_2022_2nd;
 CREATE DATABASE sb_c_2022_2nd;
 USE sb_c_2022_2nd;
 
