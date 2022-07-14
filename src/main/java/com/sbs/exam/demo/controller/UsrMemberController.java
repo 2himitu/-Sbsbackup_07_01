@@ -22,25 +22,28 @@ public class UsrMemberController {
 		if(Ut.empty(loginId)) {
 			return "loginId를 입력해주세요.";
 		}
-		if(loginPw==null||loginPw.trim()=="") {
+		if(Ut.empty(loginPw)) {
 			return "loginPw를 입력해주세요.";
 		}
-		if(name==null||name.trim()=="") {
+		if(Ut.empty(name)) {
 			return "name를 입력해주세요.";
 		}
-		if(nickname==null||nickname.trim()=="") {
+		if(Ut.empty(nickname)) {
 			return "nickname를 입력해주세요.";
 		}
-		if(cellphoneNo==null||cellphoneNo.trim()=="") {
+		if(Ut.empty(cellphoneNo)) {
 			return "cellphoneNo를 입력해주세요.";
 		}
-		if(email==null||email.trim()=="") {
+		if(Ut.empty(email)) {
 			return "email를 입력해주세요.";
 		}
 		int id = memberService.join(loginId,loginPw,name,nickname,cellphoneNo,email);
 		
 		if(id ==-1 ) {
 			return"이미 있는 아이디 입니다.";
+		}
+		if(id ==-2 ) {
+			return"이미 이름과 이메일이 사용중입니다.";
 		}
 		Member member = memberService.getMemberById(id);
 		
