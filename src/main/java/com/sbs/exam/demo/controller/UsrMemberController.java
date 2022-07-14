@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sbs.exam.demo.service.MemberService;
 import com.sbs.exam.demo.util.Ut;
 import com.sbs.exam.demo.vo.Member;
+import com.sbs.exam.demo.vo.ResultData;
 
 @Controller
 public class UsrMemberController {
@@ -18,35 +19,34 @@ public class UsrMemberController {
 	
 	@RequestMapping("usr/member/doJoin")
 	@ResponseBody
-	public Object doJoin(String loginId, String loginPw, String name, String nickname, String cellphoneNo,String email) {
+	public ResultData doJoin(String loginId, String loginPw, String name, String nickname, String cellphoneNo,String email) {
 		if(Ut.empty(loginId)) {
-			return "loginId를 입력해주세요.";
+			return ResultData.from("F-1","loginId를 입력해주세요.");
 		}
 		if(Ut.empty(loginPw)) {
-			return "loginPw를 입력해주세요.";
+			return ResultData.from("F-2","loginPw를 입력해주세요.");
 		}
 		if(Ut.empty(name)) {
-			return "name를 입력해주세요.";
+			return ResultData.from("F-3","name를 입력해주세요.");
 		}
 		if(Ut.empty(nickname)) {
-			return "nickname를 입력해주세요.";
+			return ResultData.from("F-4","nickname를 입력해주세요.");
 		}
 		if(Ut.empty(cellphoneNo)) {
-			return "cellphoneNo를 입력해주세요.";
+			return ResultData.from("F-5","cellphoneNo를 입력해주세요.");
 		}
 		if(Ut.empty(email)) {
-			return "email를 입력해주세요.";
+			return ResultData.from("F-6","email를 입력해주세요.");
 		}
-		int id = memberService.join(loginId,loginPw,name,nickname,cellphoneNo,email);
+		ResultData joinRd = memberService.join(loginId,loginPw,name,nickname,cellphoneNo,email);
 		
-		if(id ==-1 ) {
-			return Ut.f("아이디(%s)는 이미있는 아이디 입니다.",loginId);
-		}
-		if(id ==-2 ) {
-			return Ut.f("이름(%s)과 이메일(%s)는(은) 이미 사용중입니다.",name,email);
-		}
-		Member member = memberService.getMemberById(id);
 		
-		return member;
+		if(joinRd.isFail()) {
+			return joinRd;
+			
+		}
+		Member member = memberService.getMemberById((int)joinRd.getData1());
+		
+		return ResultData.newData(joinRd,member);
 	}
 }
