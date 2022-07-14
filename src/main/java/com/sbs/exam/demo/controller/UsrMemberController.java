@@ -18,22 +18,22 @@ public class UsrMemberController {
 	@RequestMapping("usr/member/doJoin")
 	@ResponseBody
 	public Object doJoin(String loginId, String loginPw, String name, String nickname, String cellphoneNo,String email) {
-		if(loginId==null) {
+		if(loginId==null||loginId.trim()=="") {
 			return "loginId를 입력해주세요.";
 		}
-		if(loginPw==null) {
+		if(loginPw==null||loginPw.trim()=="") {
 			return "loginPw를 입력해주세요.";
 		}
-		if(name==null) {
+		if(name==null||name.trim()=="") {
 			return "name를 입력해주세요.";
 		}
-		if(nickname==null) {
+		if(nickname==null||nickname.trim()=="") {
 			return "nickname를 입력해주세요.";
 		}
-		if(cellphoneNo==null) {
+		if(cellphoneNo==null||cellphoneNo.trim()=="") {
 			return "cellphoneNo를 입력해주세요.";
 		}
-		if(email==null) {
+		if(email==null||email.trim()=="") {
 			return "email를 입력해주세요.";
 		}
 		int id = memberService.join(loginId,loginPw,name,nickname,cellphoneNo,email);
