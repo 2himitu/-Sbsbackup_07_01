@@ -40,10 +40,10 @@ public class UsrMemberController {
 		int id = memberService.join(loginId,loginPw,name,nickname,cellphoneNo,email);
 		
 		if(id ==-1 ) {
-			return"이미 있는 아이디 입니다.";
+			return Ut.f("아이디(%s)는 이미있는 아이디 입니다.",loginId);
 		}
 		if(id ==-2 ) {
-			return"이미 이름과 이메일이 사용중입니다.";
+			return Ut.f("이름(%s)과 이메일(%s)는(은) 이미 사용중입니다.",name,email);
 		}
 		Member member = memberService.getMemberById(id);
 		
