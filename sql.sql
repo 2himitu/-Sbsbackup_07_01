@@ -85,5 +85,17 @@ email = 'lhs12002@naver.com';
 
 SELECT * FROM `member`; 
 
+#게시물 테이블에 화원정보 추가
+
+ALTER TABLE article ADD COLUMN memberId INT (10) UNSIGNED NOT NULL AFTER `updateDate`;
+
+DESC article;
+
+# 기존 게시물에 작성자를 2번 호로 지정
+UPDATE article 
+SET memberId = 2
+WHERE memberId = 0;
+
+SELECT * FROM article;
 
 
