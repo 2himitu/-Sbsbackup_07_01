@@ -46,4 +46,11 @@ public interface MemberRepository {
 			WHERE M.name = #{name} AND M.email = #{email}
 			""")
 	Member getMemberByNameAndEmail(@Param("name")String name,@Param("email") String email);
+
+	@Select("""
+			SELECT * FROM `member` AS M
+			WHERE M.loginId = #{loginId}
+			
+			""")
+	Member getMwemberByLoinId(@Param("loginId")String loginId) ;
 }

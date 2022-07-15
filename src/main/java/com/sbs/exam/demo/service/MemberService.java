@@ -14,17 +14,17 @@ public class MemberService {
 		this.memberRepository=memberRepository;
 	}
 	
-	public ResultData join(String loginId, String loginPw, String name, String nickname, String cellphoneNo,
+	public ResultData<Integer> join(String loginId, String loginPw, String name, String nickname, String cellphoneNo,
 			String email) {
 		//id 중복체크
 		Member oldMember = getMemberByLoginId(loginId);
 		if(oldMember !=null) {
-			return ResultData.from("F-7", Ut.f("아이디(%s)는 이미있는 아이디 입니다.",loginId));
+			ResultData.from("F-7", Ut.f("아이디(%s)는 이미있는 아이디 입니다.",loginId));
 		}
 		// name =email 중복체크
 		oldMember = getMemberByNameAndEmail(name,email);
 		if(oldMember !=null) {
-			return ResultData.from("F-8", Ut.f("이름(%s)과 이메일(%s)는(은) 이미 사용중입니다.",name,email));
+			ResultData.from("F-8", Ut.f("이름(%s)과 이메일(%s)는(은) 이미 사용중입니다.",name,email));
 		}
 		memberRepository.join(loginId,loginPw,name,nickname,cellphoneNo,email);
 		int id = memberRepository.getLastInsertId();
@@ -46,6 +46,10 @@ public class MemberService {
 		Member member = memberRepository.getMemberById(id);
 		
 		return member;
+	}
+
+	public Member getMwemberByLoinId(String loginId) {
+		return memberRepository.getMwemberByLoinId(loginId);
 	}
 	
 
