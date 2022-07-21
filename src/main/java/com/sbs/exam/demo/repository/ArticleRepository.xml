@@ -22,7 +22,7 @@
 			<if test="title !=null and title != '' ">
 				title= #{title},
 			</if>
-			<if test="body !=nulland body != ' ' ">
+			<if test="body !=null and body != ''">
 				`body`=#{body},
 			</if>
 			updateDate = now()
