@@ -16,8 +16,6 @@ import com.sbs.exam.demo.vo.Article;
 import com.sbs.exam.demo.vo.ResultData;
 import com.sbs.exam.demo.vo.Rq;
 
-import ch.qos.logback.classic.pattern.Util;
-
 @Controller
 public class UsrArticleController {
 	@Autowired
@@ -142,5 +140,38 @@ public class UsrArticleController {
 		articleService.modifyArticle(id, title, body);
 		return Ut.jsReplace(Ut.f("%d번이 변경되었습니다.",id),Ut.f("../article/detail/?id=%d",id));
 	}
+	
+	@RequestMapping("/usr/article/write")
+	public String showWrite(HttpServletRequest req,Model model) {
+		return "/usr/article/write";
+	}
+
+	@RequestMapping("/usr/article/doWrite")
+	@ResponseBody
+	public String doModify(HttpServletRequest req, String title, String body,String replaceUri) {
+		Rq rq =(Rq)req.getAttribute("rq");
+
+		if(Ut.empty(title)) {
+			return rq.jsHistoryBack("제목을 입력해줘");
+		}
+		if(Ut.empty(body)) {
+			return rq.jsHistoryBack("내용을 입력해줘");
+		}
+		
+
+		ResultData<Integer> writeArticleRd = articleService.writeArticle(rq.getLoginedMemberId(), title, body );
+		int id = writeArticleRd.getData1();
+		
+		if(Ut.empty(replaceUri)) {
+			replaceUri= Ut.f("../article/ditale?id=%d", id);
+		}
+
+
+		return rq.jsReplace(Ut.f("%d번 게시물이 생성습니다.", id), replaceUri);
+	}
+	
+	
+	
+	
 	// 액션 메서드 끝
 }
