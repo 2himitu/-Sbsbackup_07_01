@@ -60,10 +60,11 @@ public class UsrArticleController {
 			
 			return rq.jsHistoryBackJsOnView(Ut.f("%d번 게시물이 존게하지 않습니다.",boardId));
 		}
-		
+		int articleCount = articleService.getArticlesCount(boardId);
 		List<Article> articles = articleService.getForPrintArticles(rq.getLoginedMemberId(),boardId);
 
 		model.addAttribute("board", board);
+		model.addAttribute("articleCount", articleCount);
 		model.addAttribute("articles", articles);
 
 		return "usr/article/list";

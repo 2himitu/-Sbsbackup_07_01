@@ -90,4 +90,9 @@ public class ArticleService {
 		
 		return ResultData.from("S-1", "게시물 삭제가 가능합니다.");
 	}
+
+	public int getArticlesCount(int boardId) {
+		int articleCount = articleRepository.getArticlesCount(boardId);
+		return articleCount;
+	}
 }
