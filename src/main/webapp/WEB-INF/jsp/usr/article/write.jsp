@@ -9,23 +9,38 @@
   <div class="container mx-auto px-3">
     <form class="table-box-type-1" method="POST"
       action="../article/doWrite">
-      <input type="hidden" name="id" value="${article.id}" />
       <table>
         <colgroup>
           <col width="200" />
         </colgroup>
         <tbody>
           <tr>
+            <th>작성자</th>
+            <td>${rq.loginedMember.nickname}</td>
+          </tr>
+          <tr>
+            <th>게시판</th>
+            <td>
+              <select class="select select-bordered" name="boardId">
+                <option selected disabled>게시판을 선택해주세요.</option>
+                <option value="1">공지</option>
+                <option value="2">자유</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
             <th>제목</th>
             <td>
-              <input class="input input-bordered w-full max-w-xs"
-                name="title" type="text" placeholder="제목"/>
+              <input required="required"
+                class="input input-bordered w-full max-w-xs"
+                name="title" type="text" placeholder="제목" />
             </td>
           </tr>
           <tr>
             <th>내용</th>
             <td>
-              <textarea class="textarea textarea-bordered w-full"
+              <textarea required="required"
+                class="textarea textarea-bordered w-full"
                 placeholder="Bio" name="body" rows="10"></textarea>
             </td>
           </tr>

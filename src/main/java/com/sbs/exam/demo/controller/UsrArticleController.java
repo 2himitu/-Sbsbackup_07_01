@@ -1,8 +1,10 @@
 package com.sbs.exam.demo.controller;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,54 +23,32 @@ public class UsrArticleController {
 	private BoardService boardService;
 	private Rq rq;
 	
-	public UsrArticleController( ArticleService articleService, BoardService boardService,Rq rq) {
+	public UsrArticleController(ArticleService articleService, BoardService boardService, Rq rq) {
 		this.articleService = articleService;
-		this.boardService = boardService; 
-		this.rq = rq; 
-		
-	}
-
-	// 액션 메서드 시작
-	@RequestMapping("/usr/article/doAdd")
-	@ResponseBody
-	public ResultData<Article> doAdd( String title, String body) {
-
-		if (Ut.empty(title)) {
-			return ResultData.from("F-1", "title(을)를 입력해주세요.");
-		}
-
-		if (Ut.empty(body)) {
-			return ResultData.from("F-2", "body(을)를 입력해주세요.");
-		}
-
-		ResultData<Integer> writeArticleRd = articleService.writeArticle(rq.getLoginedMemberId(), title, body);
-		int id = writeArticleRd.getData1();
-
-		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
-
-		return ResultData.newData(writeArticleRd, "article", article);
+		this.boardService = boardService;
+		this.rq = rq;
 	}
 
 	@RequestMapping("/usr/article/list")
-	public String showList( Model model,int boardId) {
+	public String showList(Model model, int boardId) {
 		Board board = boardService.getBoardById(boardId);
-
-		if( board == null ) {
-			
-			return rq.jsHistoryBackJsOnView(Ut.f("%d번 게시물이 존게하지 않습니다.",boardId));
+		
+		if ( board == null ) {
+			return rq.historyBackJsOnView(Ut.f("%d번 게시판은 존재하지 않습니다.", boardId));
 		}
-		int articleCount = articleService.getArticlesCount(boardId);
-		List<Article> articles = articleService.getForPrintArticles(rq.getLoginedMemberId(),boardId);
+
+		int articlesCount = articleService.getArticlesCount(boardId);
+		List<Article> articles = articleService.getForPrintArticles(rq.getLoginedMemberId(), boardId);
 
 		model.addAttribute("board", board);
-		model.addAttribute("articleCount", articleCount);
+		model.addAttribute("articlesCount", articlesCount);
 		model.addAttribute("articles", articles);
 
 		return "usr/article/list";
 	}
 
 	@RequestMapping("/usr/article/detail")
-	public String showDetail( Model model, int id) {
+	public String showDetail(Model model, int id) {
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
 		model.addAttribute("article", article);
@@ -92,38 +72,37 @@ public class UsrArticleController {
 	@ResponseBody
 	public String doDelete(int id) {
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
-		
+
 		if (article == null) {
-			Ut.jsHistoryBack(Ut.f("%d번 게시물이 존재하지 않습니다.", id));
+			rq.jsHistoryBack(Ut.f("%d번 게시물이 존재하지 않습니다.", id));
 		}
 
 		if (article.getMemberId() != rq.getLoginedMemberId()) {
-			return Ut.jsHistoryBack("권한이 없습니다.");
+			return rq.jsHistoryBack("권한이 없습니다.");
 		}
 
 		articleService.deleteArticle(id);
 
-		return Ut.jsReplace(Ut.f("%d번 게시물을 삭제하였습니다.", id), "../article/list");
+		return rq.jsReplace(Ut.f("%d번 게시물을 삭제하였습니다.", id), "../article/list");
 	}
-	
 
 	@RequestMapping("/usr/article/modify")
-	public String showModify(int id, Model model) {
+	public String showModify(Model model, int id) {
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
-		
-		
+
 		if (article == null) {
-			return rq.jsHistoryBackJsOnView(Ut.f("%d번 게시물이 존재하지 않습니다.", id));
+			return rq.historyBackJsOnView(Ut.f("%d번 게시물이 존재하지 않습니다.", id));
 		}
+
 		ResultData actorCanModifyRd = articleService.actorCanModify(rq.getLoginedMemberId(), article);
 
 		if (actorCanModifyRd.isFail()) {
-			return rq.jsHistoryBackJsOnView(actorCanModifyRd.getMsg());
+			return rq.historyBackJsOnView(actorCanModifyRd.getMsg());
 		}
+
 		model.addAttribute("article", article);
 
-		
-		return "/usr/article/modify";
+		return "usr/article/modify";
 	}
 
 	@RequestMapping("/usr/article/doModify")
@@ -132,47 +111,43 @@ public class UsrArticleController {
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
 		if (article == null) {
-			return rq.jsHistoryBackJsOnView(Ut.f("%d번 게시물이 존재하지 않습니다.", id));
+			return rq.jsHistoryBack(Ut.f("%d번 게시물이 존재하지 않습니다.", id));
 		}
 
 		ResultData actorCanModifyRd = articleService.actorCanModify(rq.getLoginedMemberId(), article);
 
 		if (actorCanModifyRd.isFail()) {
-			return rq.jsHistoryBackJsOnView(actorCanModifyRd.getMsg());
+			return rq.jsHistoryBack(actorCanModifyRd.getMsg());
 		}
+
 		articleService.modifyArticle(id, title, body);
-		return Ut.jsReplace(Ut.f("%d번이 변경되었습니다.",id),Ut.f("../article/detail/?id=%d",id));
+
+		return rq.jsReplace(Ut.f("%d번 글이 수정되었습니다.", id), Ut.f("../article/detail?id=%d", id));
 	}
-	
+
 	@RequestMapping("/usr/article/write")
-	public String showWrite(Model model) {
-		return "/usr/article/write";
+	public String showWrite(HttpServletRequest req, Model model) {
+		return "usr/article/write";
 	}
 
 	@RequestMapping("/usr/article/doWrite")
 	@ResponseBody
-	public String doModify(String title, String body,String replaceUri) {
-		if(Ut.empty(title)) {
-			return rq.jsHistoryBack("제목을 입력해줘");
+	public String doWrite(int boardId, String title, String body, String replaceUri) {
+		if (Ut.empty(title)) {
+			return rq.jsHistoryBack("title(을)를 입력해주세요.");
 		}
-		if(Ut.empty(body)) {
-			return rq.jsHistoryBack("내용을 입력해줘");
-		}
-		
 
-		ResultData<Integer> writeArticleRd = articleService.writeArticle(rq.getLoginedMemberId(), title, body );
+		if (Ut.empty(body)) {
+			return rq.jsHistoryBack("body(을)를 입력해주세요.");
+		}
+
+		ResultData<Integer> writeArticleRd = articleService.writeArticle(rq.getLoginedMemberId(), boardId, title, body);
 		int id = writeArticleRd.getData1();
 		
-		if(Ut.empty(replaceUri)) {
-			replaceUri= Ut.f("../article/ditale?id=%d", id);
+		if (Ut.empty(replaceUri)) {
+			replaceUri = Ut.f("../article/detail?id=%d", id);
 		}
 
-
-		return rq.jsReplace(Ut.f("%d번 게시물이 생성습니다.", id), replaceUri);
+		return rq.jsReplace(Ut.f("%d번 글이 생성되었습니다.", id), replaceUri);
 	}
-	
-	
-	
-	
-	// 액션 메서드 끝
 }
