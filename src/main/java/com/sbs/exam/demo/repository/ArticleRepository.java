@@ -36,10 +36,13 @@ public interface ArticleRepository {
 				AND A.boardId = #{boardId}
 			</if>
 			ORDER BY A.id DESC
+			<if test="limitStart != -1">
+				LIMIT #{limitStart}, #{limitTake}
+			</if>
 			</script>
 			
 			""")
-	public List<Article> getArticles(@Param("boardId")  int boardId);
+	public List<Article> getArticles(@Param("boardId")  int boardId,int limitStart, int limitTake);
 
 	public void deleteArticle(@Param("id") int id);
 
