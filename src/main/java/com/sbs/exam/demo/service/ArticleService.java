@@ -99,4 +99,13 @@ public class ArticleService {
 		int articleCount = articleRepository.getArticlesCount(boardId,searchKeywordTypeCode,searchKeyword);
 		return articleCount;
 	}
+
+	public ResultData<Integer> increaseHitCount(int id) {
+		int affectedRowsConnt = articleRepository.increaseHitCount(id);
+		
+		if(affectedRowsConnt==0) {
+			return ResultData.from("F-1","게시물이 존제하지 않습니다.","affectedRowsConnt",affectedRowsConnt);
+		}
+		return ResultData.from("S-1", "조회수가 증가 되었습니다.","affectedRowsConnt",affectedRowsConnt);
+	}
 }

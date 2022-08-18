@@ -145,7 +145,14 @@ SELECT * FROM board WHERE id = 1;
  regDate,updateDate,memberId,boardId,title,`body`
  )
  SELECT NOW(),NOW(),FLOOR(RAND() * 2 ) + 1,FLOOR(RAND() * 2 ) + 1,
- CONCAT('제목_',RAND()),CONCAT('내용_',RAND()) 
+ CONCAT(#'제목_',RAND()),CONCAT('내용_',RAND()) 
+ '제목_',FLOOR(RAND()*100)+ 1),CONCAT('내용_',FLOOR(RAND()*100)+ 1)
  FROM article;
+
+#게시물 테이블 hitCount 칼럼 추가
+ALTER TABLE article 
+ADD COLUMN hitCount INT(10) UNSIGNED NOT NULL DEFAULT 0;
+
+DESC article;
 
 SELECT COUNT(*) FROM article;
