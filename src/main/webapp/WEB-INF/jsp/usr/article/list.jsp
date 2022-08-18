@@ -5,9 +5,30 @@
 <%@ include file="../common/head.jspf"%>
 <section class="mt-5">
   <div class="container mx-auto px-3">
-    <div>게시물 개수 : ${articlesCount}개</div>
-    <div class="table-box-type-1">
-      <table>
+
+    <div class="flex">
+      <div>
+        게시물 개수 :
+        <span>${articlesCount}</span>
+        개
+      </div>
+      <div class="flex-grow"></div>
+      <form class="flex">
+        <input type="hidden" name="boardId" value="${param.boardId}"/>
+        <select data-value="${param.searchKeywordTypeCode}" name="searchKeywordTypeCode" class="select select-bordered">
+          <option disabled="disabled">검색타입</option>
+          <option value="title">제목</option>
+          <option value="body">내용</option>
+          <option value="title,body">제목,내용</option>
+        </select>
+        <input name="searchKeyword" type="text" class="ml-2 w-72 input input-bordered"
+          placeholder="검색를 입력해주세요." maxlength="20"
+          value="${param.searchKeyword}" />
+          <button type="submit" class="ml-2 btn btn-primary">검색</button>
+      </form>
+    </div>
+    <div class="mt-3">
+      <table class="table table-fixed w-full">
         <colgroup>
           <col width="50" />
           <col width="150" />
@@ -31,7 +52,7 @@
               <td>${article.updateDate.substring(2, 16)}</td>
               <td>${article.extra__writerName}</td>
               <td>
-                <a class="btn-text-link"
+                <a class="btn-text-link block w-full truncate"
                   href="../article/detail?id=${article.id}">${article.title}</a>
               </td>
             </tr>
@@ -46,14 +67,13 @@
           value="${page - pageMenuArmLen >=1 ? page - pageMenuArmLen : 1}" />
         <c:set var="endPage"
           value="${page + pageMenuArmLen <=pagesCount ? page + pageMenuArmLen : pagesCount}" />
-       
-        <c:set var="pageBaseUri"
-          value="boardId=${boardId}" />
+
+        <c:set var="pageBaseUri" value="boardId=${boardId}" />
         <c:set var="pageBaseUri"
           value="${pageBaseUri}&searchKeywordTypeCode=${param.searchKeywordTypeCode}" />
         <c:set var="pageBaseUri"
           value="${pageBaseUri}&searchKeyword=${param.searchKeyword}" />
-       
+
         <c:if test="${startPage > 1}">
           <a class="btn btn-sm" href="?page=1&${pageBaseUri}">1</a>
           <c:if test="${startPage !=2}">
@@ -71,7 +91,8 @@
           <c:if test="${endPage != pagesCount-1}">
             <button class="btn btn-sm btn-disabled">...</button>
           </c:if>
-          <a class="btn btn-sm" href="?page=${pagesCount}&${pageBaseUri}">${pagesCount}</a>
+          <a class="btn btn-sm"
+            href="?page=${pagesCount}&${pageBaseUri}">${pagesCount}</a>
         </c:if>
       </div>
     </div>
