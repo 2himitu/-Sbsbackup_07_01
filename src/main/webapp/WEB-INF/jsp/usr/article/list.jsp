@@ -5,7 +5,7 @@
 <%@ include file="../common/head.jspf"%>
 <section class="mt-5">
   <div class="container mx-auto px-3">
-    <div>게시물 개수 : ${articleCount}개</div>
+    <div>게시물 개수 : ${articlesCount}개</div>
     <div class="table-box-type-1">
       <table>
         <colgroup>
@@ -41,8 +41,8 @@
     </div>
     <div class="page-menu mt-3">
     <div class="btn-group justify-center">
-    <c:forEach begin="1" end="10" var="i">
-      <a class="btn btn-sm ${param.page == i ? 'btn-active' : ''}" href="?page=${i}">${i}</a>
+    <c:forEach begin="1" end="${pagesCount}" var="i">
+      <a class="btn btn-sm ${page == i ? 'btn-active' : ''}" href="?page=${i}">${i}</a>
     </c:forEach>
     </div>
     </div>
