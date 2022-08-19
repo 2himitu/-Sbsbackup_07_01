@@ -10,16 +10,16 @@
 </script>
 <script type="text/javascript">
 	function ArticleDetail__increaseHitCount() {
-		const localStorageKey = 'aricle__'+params.id+'__viewDone';
-		
-		if ( localStorage.getItem(localStorageKey) ){
+		const localStorageKey = 'aricle__' + params.id + '__viewDone';
+
+		if (localStorage.getItem(localStorageKey)) {
 			return;
 		}
-		localStorage.setItem(localStorageKey,true);
-		
+		localStorage.setItem(localStorageKey, true);
+
 		$.get('../article/doIncreaseHitCountRd', {
 			id : params.id,
-			ajaxMode: 'Y'
+			ajaxMode : 'Y'
 		}, function(data) {
 			$('.article-detail__hit-Count').empty().html(data.data1);
 		}, 'json');
@@ -40,9 +40,7 @@
           <tr>
             <th>번호</th>
             <td>
-            <div class="badge badge-primary">
-            ${article.id}
-            </div>
+              <div class="badge badge-primary">${article.id}</div>
             </td>
           </tr>
           <tr>
@@ -60,7 +58,15 @@
           <tr>
             <th>조회수</th>
             <td>
-              <span class="badge badge-primary article-detail__hit-Count">${article.hitCount}</span>
+              <span
+                class="badge badge-primary article-detail__hit-Count">${article.hitCount}</span>
+            </td>
+          </tr>
+          <tr>
+            <th>추천</th>
+            <td>
+              <span
+                class="badge badge-primary">${article.extra__goodReactionPoint}</span>
             </td>
           </tr>
           <tr>

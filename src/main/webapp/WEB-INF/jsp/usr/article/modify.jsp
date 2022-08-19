@@ -34,6 +34,10 @@
             <td>${article.extra__writerName}</td>
           </tr>
           <tr>
+            <th>추천</th>
+            <td>${article.extra__goodReactionPoint}</td>
+          </tr>
+          <tr>
             <th>제목</th>
             <td>
               <input class="input input-bordered w-full max-w-xs"
