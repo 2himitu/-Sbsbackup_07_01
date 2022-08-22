@@ -13,24 +13,25 @@ import com.sbs.exam.demo.vo.Article;
 public interface ArticleRepository {
 	public void writeArticle(@Param("memberId") int memberId, @Param("boardId") int boardId,
 			@Param("title") String title, @Param("body") String body);
-
 	@Select("""
 			<script>
-			SELECT A.* ,
+			SELECT A.*,
 			M.nickname AS extra__writerName
 			FROM article AS A
 			LEFT JOIN `member` AS M
 			ON A.memberId = M.id
-		
 			WHERE 1
 			AND A.id = #{id}
 			</script>
 			""")
 	public Article getForPrintArticle(@Param("id") int id);
-
+	
+	public void deleteArticle(@Param("id") int id);
+	
+	public void modifyArticle(@Param("id") int id, @Param("title") String title, @Param("body") String body);
 	@Select("""
 			<script>
-			SELECT A.* ,
+			SELECT A.*,
 			M.nickname AS extra__writerName
 			FROM article AS A
 			LEFT JOIN `member` AS M
@@ -61,19 +62,13 @@ public interface ArticleRepository {
 				LIMIT #{limitStart}, #{limitTake}
 			</if>
 			</script>
-
 			""")
-	public List<Article> getArticles(int boardId, String searchKeywordTypeCode, String searchKeyword, int limitStart, int limitTake);
-
-	public void deleteArticle(@Param("id") int id);
-
-	public void modifyArticle(@Param("id") int id, @Param("title") String title, @Param("body") String body);
-
+	public List<Article> getForPrintArticles(int boardId, String searchKeywordTypeCode, String searchKeyword,
+			int limitStart, int limitTake);
 	public int getLastInsertId();
-
 	@Select("""
 			<script>
-			SELECT COUNT(*)
+			SELECT COUNT(*) AS cnt
 			FROM article AS A
 			WHERE 1
 			<if test="boardId != 0">
@@ -82,33 +77,31 @@ public interface ArticleRepository {
 			<if test="searchKeyword != ''">
 				<choose>
 					<when test="searchKeywordTypeCode == 'title'">
-						AND A.title LIKE CONCAT('%',#{searchKeyword},'%')
-					</when>	
+						AND A.title LIKE CONCAT('%', #{searchKeyword}, '%')
+					</when>
 					<when test="searchKeywordTypeCode == 'body'">
-						AND A.body LIKE CONCAT('%',#{searchKeyword},'%')
-					</when>	
+						AND A.body LIKE CONCAT('%', #{searchKeyword}, '%')
+					</when>
 					<otherwise>
 						AND (
-						A.title LIKE CONCAT('%',#{searchKeyword},'%')
-						OR
-						A.body LIKE CONCAT('%',#{searchKeyword},'%')
+							A.title LIKE CONCAT('%', #{searchKeyword}, '%')
+							OR
+							A.body LIKE CONCAT('%', #{searchKeyword}, '%')
 						)
 					</otherwise>
 				</choose>
 			</if>
 			</script>
 			""")
-	public int getArticlesCount(@Param("boardId") int boardId, String searchKeywordTypeCode, String searchKeyword);
-
+	public int getArticlesCount(int boardId, String searchKeywordTypeCode, String searchKeyword);
 	@Update("""
 			<script>
 			UPDATE article
 			SET hitCount = hitCount + 1
-			WHERE id = #{id} 
+			WHERE id = #{id}
 			</script>
 			""")
 	public int increaseHitCount(int id);
-
 	@Select("""
 			<script>
 			SELECT hitCount
@@ -118,15 +111,21 @@ public interface ArticleRepository {
 			""")
 	public int getArticleHitCount(int id);
 
-	@Select("""
+	@Update("""
 			<script>
-			SELECT IFNULL(SUM(RP.point), 0) AS s
-			FROM reactionPoint AS RP
-			WHERE RP.relTypeCode = 'article'
-			AND RP.relid = #{id}
-			AND RP.memberId = #{memberId}
+			UPDATE article
+			SET goodReactionPoint = goodReactionPoint + 1
+			WHERE id = #{id}
 			</script>
 			""")
-	public int getSumReactionPointByMemberId(int id, int memberId);
+	public int increaseGoodReactionPoint(int id);
 
+	@Update("""
+			<script>
+			UPDATE article
+			SET badReactionPoint = badReactionPoint + 1
+			WHERE id = #{id}
+			</script>
+			""")
+	public int increaseBadReactionPoint(int id);
 }

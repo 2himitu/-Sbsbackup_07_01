@@ -1,10 +1,10 @@
 package com.sbs.exam.demo.controller;
 
-import org.springframework.stereotype.Controller;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.List;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.exam.demo.service.ArticleService;
 import com.sbs.exam.demo.service.BoardService;
+import com.sbs.exam.demo.service.ReactionPointService;
 import com.sbs.exam.demo.util.Ut;
 import com.sbs.exam.demo.vo.Article;
 import com.sbs.exam.demo.vo.Board;
@@ -22,34 +23,37 @@ import com.sbs.exam.demo.vo.Rq;
 public class UsrArticleController {
 	private ArticleService articleService;
 	private BoardService boardService;
+	private ReactionPointService reactionPointService;
 	private Rq rq;
-	
-	public UsrArticleController(ArticleService articleService, BoardService boardService, Rq rq) {
+
+	public UsrArticleController(ArticleService articleService, BoardService boardService, ReactionPointService reactionPointService, Rq rq) {
 		this.articleService = articleService;
 		this.boardService = boardService;
+		this.reactionPointService = reactionPointService;
 		this.rq = rq;
 	}
 
 	@RequestMapping("/usr/article/list")
-	public String showList(Model model, @RequestParam(defaultValue = "1") int boardId,@RequestParam(defaultValue = "title,body") String searchKeywordTypeCode,
-			@RequestParam(defaultValue = "")String searchKeyword,@RequestParam(defaultValue = "1")int page) {
+	public String showList(Model model, @RequestParam(defaultValue = "1") int boardId,
+			@RequestParam(defaultValue = "title,body") String searchKeywordTypeCode,
+			@RequestParam(defaultValue = "") String searchKeyword, @RequestParam(defaultValue = "1") int page) {
 		Board board = boardService.getBoardById(boardId);
-		
-		if ( board == null ) {
+
+		if (board == null) {
 			return rq.historyBackJsOnView(Ut.f("%d번 게시판은 존재하지 않습니다.", boardId));
 		}
 
-		int articlesCount = articleService.getArticlesCount(boardId,searchKeywordTypeCode,searchKeyword);
-		
-		int itemsCountInAPage = 10;
-		int pagesCount = (int) Math.ceil((double)articlesCount/itemsCountInAPage);
-		List<Article> articles = articleService.getForPrintArticles(rq.getLoginedMemberId(), boardId,
-				searchKeywordTypeCode,searchKeyword,itemsCountInAPage,page);
+		int articlesCount = articleService.getArticlesCount(boardId, searchKeywordTypeCode, searchKeyword);
 
-		model.addAttribute("board", board);
+		int itemsCountInAPage = 10;
+		int pagesCount = (int) Math.ceil((double) articlesCount / itemsCountInAPage);
+		List<Article> articles = articleService.getForPrintArticles(rq.getLoginedMemberId(), boardId,
+				searchKeywordTypeCode, searchKeyword, itemsCountInAPage, page);
+
 		model.addAttribute("boardId", boardId);
-		model.addAttribute("page",page);
-		model.addAttribute("pagesCount",pagesCount );
+		model.addAttribute("page", page);
+		model.addAttribute("board", board);
+		model.addAttribute("pagesCount", pagesCount);
 		model.addAttribute("articlesCount", articlesCount);
 		model.addAttribute("articles", articles);
 
@@ -58,35 +62,43 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/detail")
 	public String showDetail(Model model, int id) {
-
 		Article article = articleService.getForPrintArticle(rq.getLoginedMemberId(), id);
 
 		model.addAttribute("article", article);
 		
-		boolean actorCanMakeReactionPoint = articleService.actorCanMakeReactionPoint(rq.getLoginedMemberId(), id);
+		ResultData  actorCanMakeReactionPointRd = reactionPointService.actorCanMakeReactionPoint(rq.getLoginedMemberId(), "article", id);
 		
-		model.addAttribute("actorCanMakeReactionPoint",actorCanMakeReactionPoint);
+		model.addAttribute("actorCanMakeReaction", actorCanMakeReactionPointRd.isSuccess());
+
+		if ( actorCanMakeReactionPointRd.getResultCode().equals("F-2") ) {
+			int sumReactionPointByMemberId = (int)actorCanMakeReactionPointRd.getData1();
+
+			if ( sumReactionPointByMemberId > 0 ) {
+				model.addAttribute("actorCanCancelGoodReaction", true);
+			}
+			else {
+				model.addAttribute("actorCanCancelBadReaction", true);
+			}
+		}
 
 		return "usr/article/detail";
 	}
-	
+
 	@RequestMapping("/usr/article/doIncreaseHitCountRd")
 	@ResponseBody
-	public ResultData<Integer> doIncreaseHitCountRd(int id){
+	public ResultData<Integer> doIncreaseHitCountRd(int id) {
 		ResultData<Integer> increaseHitCountRd = articleService.increaseHitCount(id);
-		
+
 		if (increaseHitCountRd.isFail()) {
 			return increaseHitCountRd;
 		}
-				
+
 		ResultData<Integer> rd = ResultData.newData(increaseHitCountRd, "hitCount", articleService.getArticleHitCount(id));
 		
-		rd.setData2("id",id);
+		rd.setData2("id", id);
 		
 		return rd;
-	
 	}
-		
 
 	@RequestMapping("/usr/article/getArticle")
 	@ResponseBody
@@ -115,7 +127,7 @@ public class UsrArticleController {
 
 		articleService.deleteArticle(id);
 
-		return rq.jsReplace(Ut.f("%d번 게시물을 삭제하였습니다.", id), "../article/list?boardId=1");
+		return rq.jsReplace(Ut.f("%d번 게시물을 삭제하였습니다.", id), "../article/list");
 	}
 
 	@RequestMapping("/usr/article/modify")
@@ -175,7 +187,7 @@ public class UsrArticleController {
 
 		ResultData<Integer> writeArticleRd = articleService.writeArticle(rq.getLoginedMemberId(), boardId, title, body);
 		int id = writeArticleRd.getData1();
-		
+
 		if (Ut.empty(replaceUri)) {
 			replaceUri = Ut.f("../article/detail?id=%d", id);
 		}
