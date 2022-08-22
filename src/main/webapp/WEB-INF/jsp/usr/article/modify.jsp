@@ -35,7 +35,7 @@
           </tr>
           <tr>
             <th>추천</th>
-            <td>${article.extra__goodReactionPoint}</td>
+            <td>${article.goodReactionPoint}</td>
           </tr>
           <tr>
             <th>제목</th>

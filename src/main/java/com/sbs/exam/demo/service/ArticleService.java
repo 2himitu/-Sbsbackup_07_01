@@ -114,6 +114,6 @@ public class ArticleService {
 	}
 
 	public boolean actorCanMakeReactionPoint(int actorId, int id) {
-		return articleRepository.getSumReactionPointByMemberId(id,actorId) != 0;
+		return articleRepository.getSumReactionPointByMemberId(id,actorId) == 0;
 	}
 }

@@ -223,3 +223,5 @@ memberId = 3,
 relTypeCode = 'article',
 relId = 2,
 `point` = -1 ;
+
+SELECT * FROM reactionPoint;
