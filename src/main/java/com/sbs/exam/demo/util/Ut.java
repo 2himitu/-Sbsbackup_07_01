@@ -4,25 +4,32 @@ import java.net.URLEncoder;
 
 
 public class Ut {
-
 	public static boolean empty(Object obj) {
-		if(obj==null) {
-			return true;
-			
-		}
-		if(obj instanceof String ==false) {
+		if (obj == null) {
 			return true;
 		}
 		
+		if (obj instanceof Integer ) {
+			return ((int)obj) == 0;
+		}
+		
+		if (obj instanceof Long ) {
+			return ((long)obj) == 0;
+		}
+
+		if (obj instanceof String == false) {
+			return true;
+		}
+
 		String str = (String) obj;
-		return str.trim().length()==0;
+
+		return str.trim().length() == 0;
 	}
 
-	public static String f(String fromat, Object... args) {
-		
-		return String.format(fromat, args);
+	public static String f(String format, Object... args) {
+		return String.format(format, args);
 	}
-	
+
 	public static String jsHistoryBack(String msg) {
 		if (msg == null) {
 			msg = "";
@@ -43,7 +50,7 @@ public class Ut {
 		if (msg == null) {
 			msg = "";
 		}
-
+		
 		if (uri == null) {
 			uri = "";
 		}
@@ -58,7 +65,7 @@ public class Ut {
 				</script>
 				""", msg, uri);
 	}
-
+	
 	 public static String getUriEncoded(String str) {
 	        try {
 	            return URLEncoder.encode(str, "UTF-8");
@@ -66,6 +73,5 @@ public class Ut {
 	            return str;
 	        }
 	    }
-
 
 }

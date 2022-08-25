@@ -1,7 +1,9 @@
 package com.sbs.exam.demo.vo;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class ResultData<DT> {
 	@Getter
 	private String resultCode;
@@ -15,7 +17,7 @@ public class ResultData<DT> {
 	private String data2Name;
 	@Getter
 	private Object data2;
-	
+
 	public static ResultData from(String resultCode, String msg) {
 		return from(resultCode, msg, null, null);
 	}
