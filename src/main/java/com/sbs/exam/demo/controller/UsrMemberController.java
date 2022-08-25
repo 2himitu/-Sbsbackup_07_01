@@ -153,6 +153,7 @@ public class UsrMemberController {
 		if(chekMemberModifyAuthKeyRd.isFail()) {
 			return rq.historyBackJsOnView( chekMemberModifyAuthKeyRd.getMsg());
 		}
+		
 		if (Ut.empty(loginPw)) {
 			loginPw = null;
 		}
