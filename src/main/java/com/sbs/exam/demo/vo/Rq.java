@@ -20,6 +20,8 @@ import lombok.Getter;
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Rq {
 	@Getter
+	private boolean isAjax;
+	@Getter
 	private boolean isLogined;
 	@Getter
 	private int loginedMemberId;
@@ -52,6 +54,28 @@ public class Rq {
 		this.isLogined = isLogined;
 		this.loginedMemberId = loginedMemberId;
 		this.loginedMember = loginedMember;
+		
+		String requestUri = req.getRequestURI();
+
+		// 해당 요청이 ajax 요청인지 아닌지 체크
+		boolean isAjax = requestUri.endsWith("Ajax");
+
+		if (isAjax == false) {
+			if (paramMap.containsKey("ajax") && paramMap.get("ajax").equals("Y")) {
+				isAjax = true;
+			}
+			else if (paramMap.containsKey("isAjax") && paramMap.get("isAjax").equals("Y")) {
+				isAjax = true;
+			}
+		}
+
+		if (isAjax == false) {
+			if (requestUri.contains("/get")) {
+				isAjax = true;
+			}
+		}
+
+		this.isAjax = isAjax;
 	}
 
 	public void printReplaceJs(String msg, String url) {
@@ -93,6 +117,16 @@ public class Rq {
 		req.setAttribute("historyBack", true);
 		return "common/js";
 	}
+	public String historyBackJsOnView(String resultCode, String msg) {
+		req.setAttribute("msg", String.format("[%s] %s", resultCode, msg));
+		req.setAttribute("historyBack", true);
+		return "common/js";
+	}
+
+	public String jsHistoryBack(String resultCode, String msg) {
+		msg = String.format("[%s] %s", resultCode, msg);
+		return Ut.jsHistoryBack(msg);
+	}
 
 	public String jsHistoryBack(String msg) {
 		return Ut.jsHistoryBack(msg);
@@ -133,6 +167,9 @@ public class Rq {
 		*/
 		
 		return "../member/doLogout?afterLogoutUri=" + getAfterLogoutUri();
+	}
+	public String getJoinUri() {
+		return "../member/join?afterLoginUri=" + getAfterLoginUri();
 	}
 
 	public String getAfterLoginUri() {
