@@ -1,6 +1,7 @@
 package com.sbs.exam.demo.vo;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,10 +29,13 @@ public class Rq {
 	private HttpServletRequest req;
 	private HttpServletResponse resp;
 	private HttpSession session;
+	private Map<String, String> paramMap;
 
 	public Rq(HttpServletRequest req, HttpServletResponse resp, MemberService memberService) {
 		this.req = req;
 		this.resp = resp;
+
+		paramMap = Ut.getParamMap(req);
 
 		this.session = req.getSession();
 
@@ -49,12 +53,11 @@ public class Rq {
 		this.loginedMemberId = loginedMemberId;
 		this.loginedMember = loginedMember;
 	}
-	
+
 	public void printReplaceJs(String msg, String url) {
 		resp.setContentType("text/html; charset=UTF-8");
 		print(Ut.jsReplace(msg, url));
 	}
-
 
 	public void printHistoryBackJs(String msg) {
 		resp.setContentType("text/html; charset=UTF-8");
@@ -68,7 +71,7 @@ public class Rq {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public boolean isNotLogined() {
 		return !isLogined;
 	}
@@ -98,19 +101,60 @@ public class Rq {
 	public String jsReplace(String msg, String uri) {
 		return Ut.jsReplace(msg, uri);
 	}
-	
+
 	public String getCurrentUri() {
 		String currentUri = req.getRequestURI();
-        String queryString = req.getQueryString();
+		String queryString = req.getQueryString();
 
-        if (queryString != null && queryString.length() > 0) {
-            currentUri += "?" + queryString;
-        }
-        
-        return currentUri;
+		if (queryString != null && queryString.length() > 0) {
+			currentUri += "?" + queryString;
+		}
+
+		return currentUri;
 	}
-	
+
 	public String getEncodedCurrentUri() {
 		return Ut.getUriEncoded(getCurrentUri());
+	}
+
+	public String getLoginUri() {
+		return "../member/login?afterLoginUri=" + getAfterLoginUri();
+	}
+	
+	public String getLogoutUri() {
+		String requestUri = req.getRequestURI();
+
+		// 필요하다면 활성화
+		/*
+		switch (requestUri) {
+		case "/usr/article/write":
+			return "";
+		}
+		*/
+		
+		return "../member/doLogout?afterLogoutUri=" + getAfterLogoutUri();
+	}
+
+	public String getAfterLoginUri() {
+		String requestUri = req.getRequestURI();
+
+		// 로그인 후 다시 돌아가면 안되는 페이지 URL 들을 적으시면 됩니다.
+		switch (requestUri) {
+		case "/usr/member/login":
+		case "/usr/member/join":
+		case "/usr/member/findLoginId":
+		case "/usr/member/findLoginPw":
+			return Ut.getUriEncoded(Ut.getStrAttr(paramMap, "afterLoginUri", ""));
+		}
+
+		return getEncodedCurrentUri();
+	}
+	
+	public String getAfterLogoutUri() {
+		return getEncodedCurrentUri();
+	}
+	
+	public String getArticleDetailUriFromArticleList(Article article) {
+		return "../article/detail?id=" + article.getId() + "&listUri=" + getEncodedCurrentUri();
 	}
 }

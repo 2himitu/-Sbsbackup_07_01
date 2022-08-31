@@ -6,11 +6,11 @@ import com.sbs.exam.demo.repository.MemberRepository;
 import com.sbs.exam.demo.util.Ut;
 import com.sbs.exam.demo.vo.Member;
 import com.sbs.exam.demo.vo.ResultData;
+
 @Service
 public class MemberService {
 	private MemberRepository memberRepository;
 	private AttrService attrService;
-
 
 	public MemberService(AttrService attrService, MemberRepository memberRepository) {
 		this.attrService = attrService;
@@ -60,19 +60,19 @@ public class MemberService {
 
 	public String genMemberModifyAuthKey(int actorId) {
 		String memberModifyAuthKey = Ut.getTempPassword(10);
-
+		
 		attrService.setValue("member", actorId, "extra", "memberModifyAuthKey", memberModifyAuthKey, Ut.getDateStrLater(60 * 5));
-
+		
 		return memberModifyAuthKey;
 	}
 
-	public ResultData chekMemberModifyAuthKey(int actorId, String memberModifyAuthKey) {
+	public ResultData checkMemberModifyAuthKey(int actorId, String memberModifyAuthKey) {
 		String saved = attrService.getValue("member", actorId, "extra", "memberModifyAuthKey");
-
-		if (saved.equals(memberModifyAuthKey)) {
-			return ResultData.from("S-1", "일치하지 않거나 만료되었습니다.");
+		
+		if ( !saved.equals(memberModifyAuthKey) ) {
+			return ResultData.from("F-1", "일치하지 않거나 만료되었습니다.");
 		}
-		return ResultData.from("S-1", "정상적인 코드 입니다");
-
+		
+		return ResultData.from("S-1", "정상적인 코드입니다.");
 	}
 }
