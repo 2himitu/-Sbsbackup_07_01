@@ -1,5 +1,7 @@
 package com.sbs.exam.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.sbs.exam.demo.repository.MemberRepository;
@@ -15,6 +17,16 @@ public class MemberService {
 	public MemberService(AttrService attrService, MemberRepository memberRepository) {
 		this.attrService = attrService;
 		this.memberRepository = memberRepository;
+	}
+	public List<Member> getForPrintMembers(int authLevel, String searchKeywordTypeCode, String searchKeyword,
+			int itemsCountInAPage, int page) {
+		int limitStart = (page - 1) * itemsCountInAPage;
+		int limitTake = itemsCountInAPage;
+
+		List<Member> members = memberRepository.getForPrintMembers(authLevel, searchKeywordTypeCode, searchKeyword,
+				limitStart, limitTake);
+
+		return members;
 	}
 
 	public ResultData<Integer> join(String loginId, String loginPw, String name, String nickname, String cellphoneNo,
@@ -75,4 +87,8 @@ public class MemberService {
 		
 		return ResultData.from("S-1", "정상적인 코드입니다.");
 	}
+	public int getMembersCount(int authLevel, String searchKeywordTypeCode, String searchKeyword) {
+		return memberRepository.getMembersCount(authLevel, searchKeywordTypeCode, searchKeyword);
+	}
+	
 }
