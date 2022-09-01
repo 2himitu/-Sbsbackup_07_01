@@ -93,7 +93,7 @@ CREATE TABLE board (
     id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     regDate DATETIME NOT NULL,
     updateDate DATETIME NOT NULL,
-    `code` CHAR(50) NOT NULL UNIQUE COMMENT 'notice(공지사항),free1(자유게시판1),free2(자유게시판2),...',
+    `code` CHAR(50) NOT NULL UNIQUE COMMENT`loginId``loginId` 'notice(공지사항),free1(자유게시판1),free2(자유게시판2),...',
     `name` CHAR(50) NOT NULL UNIQUE COMMENT '게시판 이름',
     delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '삭제여부(0=탈퇴전,1=탈퇴)',
     delDate DATETIME COMMENT '삭제날짜'
@@ -305,6 +305,9 @@ ALTER TABLE `attr` ADD INDEX (`relTypeCode`, `typeCode`, `type2Code`);
 
 # attr에 만료날짜 추가
 ALTER TABLE `attr` ADD COLUMN `expireDate` DATETIME NULL AFTER `value`;
+
+# 회원 loginId에 유니크 인덱스 추가
+ALTER TABLE `member` ADD UNIQUE INDEX (`loginId`);
 
 # 회원 대량 생성
 INSERT INTO `member`

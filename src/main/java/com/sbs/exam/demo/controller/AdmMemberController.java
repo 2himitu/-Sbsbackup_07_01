@@ -35,6 +35,11 @@ public class AdmMemberController {
 		model.addAttribute("searchKeywordTypeCode", searchKeywordTypeCode);
 		model.addAttribute("searchKeyword", searchKeyword);
 
+		model.addAttribute("pagesCount", pagesCount);
+		model.addAttribute("page", page);
+		
+		
+
 		model.addAttribute("membersCount", membersCount);
 		model.addAttribute("members", members);
 
