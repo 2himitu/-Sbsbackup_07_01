@@ -2,7 +2,7 @@
   pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="로그인" />
+<c:set var="pageTitle" value="비밀번호 찾기" />
 <%@ include file="../common/head.jspf"%>
 
 <section class="mt-5">

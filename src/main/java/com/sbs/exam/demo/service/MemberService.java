@@ -44,14 +44,16 @@ public class MemberService {
 		if (oldMember != null) {
 			return ResultData.from("F-8", Ut.f("해당 이름(%s)과 이메일(%s)은 이미 사용중입니다.", name, email));
 		}
+		loginPw = Ut.sha256(loginPw);
 
 		memberRepository.join(loginId, loginPw, name, nickname, cellphoneNo, email);
 		int id = memberRepository.getLastInsertId();
-
+			
+		
 		return ResultData.from("S-1", "회원가입이 완료되었습니다.", "id", id);
 	}
 
-	private Member getMemberByNameAndEmail(String name, String email) {
+	public Member getMemberByNameAndEmail(String name, String email) {
 		return memberRepository.getMemberByNameAndEmail(name, email);
 	}
 
