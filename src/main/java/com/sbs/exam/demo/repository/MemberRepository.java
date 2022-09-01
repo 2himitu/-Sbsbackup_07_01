@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.sbs.exam.demo.vo.Member;
 
@@ -32,6 +33,7 @@ public interface MemberRepository {
 			SELECT *
 			FROM `member` AS M
 			WHERE M.id = #{id}
+			AND delStatus = 0
 			""")
 	Member getMemberById(@Param("id") int id);
 
@@ -39,6 +41,7 @@ public interface MemberRepository {
 			SELECT *
 			FROM `member` AS M
 			WHERE M.loginId = #{loginId}
+			AND delStatus = 0
 			""")
 	Member getMemberByLoginId(@Param("loginId") String loginId);
 
@@ -47,6 +50,7 @@ public interface MemberRepository {
 			FROM `member` AS M
 			WHERE M.name = #{name}
 			AND M.email = #{email}
+			AND delStatus = 0
 			""")
 	Member getMemberByNameAndEmail(@Param("name") String name, @Param("email") String email);
 
@@ -80,6 +84,7 @@ public interface MemberRepository {
 			SELECT M.*
 			FROM `member` AS M
 			WHERE 1
+			AND delStatus = 0
 			<if test="authLevel != 0">
 			    AND M.authLevel = #{authLevel}
 			</if>
@@ -119,6 +124,7 @@ public interface MemberRepository {
 			SELECT COUNT(*) AS cnt
 			FROM `member` AS M
 			WHERE 1
+			AND delStatus = 0
 			<if test="authLevel != 0">
 			    AND M.authLevel = #{authLevel}
 			</if>
@@ -147,4 +153,18 @@ public interface MemberRepository {
 			</script>
 			""")
 	int getMembersCount(int authLevel, String searchKeywordTypeCode, String searchKeyword);
+	
+	@Select("""
+			<script>
+			UPDATE `member`
+			<set>
+				updateDate = NOW(),
+				delStatus = 1,
+				delDate = NOW(),
+			</set>
+			WHERE id = #{id}
+			</script>
+			
+			""")
+	void deleteMember(int id);
 }

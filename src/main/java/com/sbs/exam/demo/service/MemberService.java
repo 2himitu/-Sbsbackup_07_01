@@ -90,5 +90,16 @@ public class MemberService {
 	public int getMembersCount(int authLevel, String searchKeywordTypeCode, String searchKeyword) {
 		return memberRepository.getMembersCount(authLevel, searchKeywordTypeCode, searchKeyword);
 	}
+	public void deleteMembers(List<Integer> memberIds) {
+		for (int memberId : memberIds ) {
+			Member member = getMemberById(memberId);
+			if(member != null) {
+				deleteMember(member);
+			}
+		}
+	}
+	private void deleteMember(Member member) {
+		memberRepository.deleteMember(member.getId());
+	}
 	
 }
