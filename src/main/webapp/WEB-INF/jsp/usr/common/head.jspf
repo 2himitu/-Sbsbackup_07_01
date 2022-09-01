@@ -122,6 +122,12 @@ Theme__init();
           </li>
           <li>
             <a class="h-full flex px-3 items-center hover:underline"
+              href="/adm/member/list">
+              <span>관리자</span>
+            </a>
+          </li>
+          <li>
+            <a class="h-full flex px-3 items-center hover:underline"
               href="${rq.logoutUri}">
               <span>로그아웃</span>
             </a>
