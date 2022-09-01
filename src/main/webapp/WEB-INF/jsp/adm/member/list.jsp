@@ -104,7 +104,7 @@
 </div>
 <form hidden method="POST" name="do-delete-members-form" action="../member/doDeleteMembers">
  <input type="hidden" name="ids" value="" />
- <input type="hidden" name="replaceUri" value="" />
+ <input type="hidden" name="replaceUris" value="rq.currentUri" />
 </form>
 
 <script type="text/javascript">
